@@ -12,9 +12,17 @@ import {
 } from '@nestjs/common';
 
 import { Response } from 'express';
+import { UserService } from './user.service';
 
 @Controller('/api/users')
 export class UserController {
+  constructor(private service: UserService) {}
+
+  @Get('/hello')
+  async sayHello(@Query('name') name: string): Promise<string> {
+    return this.service.sayHello(name);
+  }
+
   @Get('view-html')
   viewHtml(@Query('name') name: string, @Res() response: Response) {
     response.render('index.html', {
@@ -39,14 +47,6 @@ export class UserController {
       url: '/api/users/sample-response',
       statusCode: 301,
     };
-  }
-
-  @Get('/hello')
-  async sayHello(
-    @Query('first_name') firstName: string,
-    @Query('last_name') lastName: string,
-  ): Promise<string> {
-    return `Hello, my name is ${firstName} ${lastName}`;
   }
 
   @Get('/:id')
