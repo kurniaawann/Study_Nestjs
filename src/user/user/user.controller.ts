@@ -12,6 +12,7 @@ import {
   Res,
 } from '@nestjs/common';
 
+import { User } from '@prisma/client';
 import { Response } from 'express';
 import { Connection } from '../connection/connection';
 import { MailService } from '../mail/mail.service';
@@ -31,7 +32,6 @@ export class UserController {
   @Get('/connection')
   async getConnection(): Promise<string> {
     this.mainService.send();
-    this.userRepository.save();
     this.emailService.send();
     return this.connection.getName();
   }
@@ -39,6 +39,14 @@ export class UserController {
   @Get('/hello')
   async sayHello(@Query('name') name: string): Promise<string> {
     return this.service.sayHello(name);
+  }
+
+  @Get('/create')
+  async create(
+    @Query('frist_name') fristName: string,
+    @Query('last_name') lastName: string,
+  ): Promise<User> {
+    return await this.userRepository.save(fristName, lastName);
   }
 
   @Get('view-html')
