@@ -1,10 +1,6 @@
 import { Module } from '@nestjs/common';
-import * as process from 'process';
-import {
-  Connection,
-  MangoDBConnection,
-  MySQLConnection,
-} from './connection/connection';
+import { ConfigService } from '@nestjs/config';
+import { Connection, createConnection } from './connection/connection';
 import { mailService, MailService } from './mail/mail.service';
 import {
   createUserRepository,
@@ -19,8 +15,8 @@ import { UserService } from './user/user.service';
     UserService,
     {
       provide: Connection,
-      useClass:
-        process.env.DATABASE == 'mysql' ? MySQLConnection : MangoDBConnection,
+      useFactory: createConnection,
+      inject: [ConfigService],
     },
     {
       provide: MailService,
