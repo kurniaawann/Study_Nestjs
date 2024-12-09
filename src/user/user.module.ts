@@ -6,6 +6,10 @@ import {
   MySQLConnection,
 } from './connection/connection';
 import { mailService, MailService } from './mail/mail.service';
+import {
+  createUserRepository,
+  UserRepository,
+} from './user-repository/user-repository';
 import { UserController } from './user/user.controller';
 import { UserService } from './user/user.service';
 
@@ -21,6 +25,11 @@ import { UserService } from './user/user.service';
     {
       provide: MailService,
       useValue: mailService,
+    },
+    {
+      provide: UserRepository,
+      useFactory: createUserRepository,
+      inject: [Connection],
     },
   ],
 })

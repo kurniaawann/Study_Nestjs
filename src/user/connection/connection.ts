@@ -5,12 +5,14 @@ export class Connection {
     return null;
   }
 }
+
 @Injectable()
 export class MySQLConnection extends Connection {
   getName(): string {
     return 'MySQL';
   }
 }
+
 @Injectable()
 export class MangoDBConnection extends Connection {
   getName(): string {
