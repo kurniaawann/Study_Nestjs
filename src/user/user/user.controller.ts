@@ -8,10 +8,21 @@ import {
   Post,
   Query,
   Redirect,
+  Res,
 } from '@nestjs/common';
+
+import { Response } from 'express';
 
 @Controller('/api/users')
 export class UserController {
+  @Get('view-html')
+  viewHtml(@Query('name') name: string, @Res() response: Response) {
+    response.render('index.html', {
+      title: 'view html berhasil',
+      name: name,
+    });
+  }
+
   @Get('sample-response')
   @Header('Content-Type', 'application/json')
   @HttpCode(200)
