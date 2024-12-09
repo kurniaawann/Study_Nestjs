@@ -46,7 +46,7 @@ export class UserController {
     @Query('first_name') firstName: string,
     @Query('last_name') lastName: string,
   ): Promise<string> {
-    return `Hello, my name is ${firstName} ${lastName}.`;
+    return `Hello, my name is ${firstName} ${lastName}`;
   }
 
   @Get('/:id')
