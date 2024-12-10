@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Header,
@@ -7,6 +8,7 @@ import {
   HttpRedirectResponse,
   Inject,
   Param,
+  ParseIntPipe,
   Post,
   Query,
   Redirect,
@@ -16,7 +18,12 @@ import {
 
 import { User } from '@prisma/client';
 import { Response } from 'express';
+import {
+  LoginUserRequest,
+  LoginUserRequestValidation,
+} from 'src/model/login.model';
 import { ValidationFilter } from 'src/validation/validation.filter';
+import { ValidationPipe } from 'src/validation/validation.pipe';
 import { Connection } from '../connection/connection';
 import { MailService } from '../mail/mail.service';
 import { UserRepository } from '../user-repository/user-repository';
@@ -31,6 +38,15 @@ export class UserController {
     private userRepository: UserRepository,
     @Inject('EmailService') private emailService: MailService,
   ) {}
+
+  @UseFilters(ValidationFilter)
+  @Post('/login')
+  login(
+    @Body(new ValidationPipe(LoginUserRequestValidation))
+    request: LoginUserRequest,
+  ) {
+    return `hello ${request.username}`;
+  }
 
   @Get('/connection')
   async getConnection(): Promise<string> {
@@ -89,7 +105,7 @@ export class UserController {
   }
 
   @Get('/:id')
-  getId(@Param('id') id: string): string {
+  getId(@Param('id', ParseIntPipe) id: number): string {
     return `GET ${id}`;
   }
 
