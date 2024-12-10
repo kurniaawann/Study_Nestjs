@@ -14,6 +14,7 @@ import {
   Redirect,
   Res,
   UseFilters,
+  UseInterceptors,
 } from '@nestjs/common';
 
 import { User } from '@prisma/client';
@@ -22,6 +23,7 @@ import {
   LoginUserRequest,
   LoginUserRequestValidation,
 } from 'src/model/login.model';
+import { TimeInterceptor } from 'src/time/time.interceptor';
 import { ValidationFilter } from 'src/validation/validation.filter';
 import { ValidationPipe } from 'src/validation/validation.pipe';
 import { Connection } from '../connection/connection';
@@ -41,6 +43,8 @@ export class UserController {
 
   @UseFilters(ValidationFilter)
   @Post('/login')
+  @Header('Content-Type', 'application/json')
+  @UseInterceptors(TimeInterceptor)
   login(
     @Body(new ValidationPipe(LoginUserRequestValidation))
     request: LoginUserRequest,
@@ -63,14 +67,14 @@ export class UserController {
 
   @Get('/create')
   async create(
-    @Query('first_name') firstName: string, // Perbaikan pada parameter
+    @Query('first_name') firstName: string,
     @Query('last_name') lastName: string,
   ): Promise<User> {
     if (!firstName) {
       throw new HttpException(
         {
           code: 400,
-          error: 'first_name is required', // Konsistensi dengan parameter yang benar
+          error: 'first_name is required',
         },
         400,
       );
