@@ -3,6 +3,7 @@ import {
   Get,
   Header,
   HttpCode,
+  HttpException,
   HttpRedirectResponse,
   Inject,
   Param,
@@ -10,10 +11,12 @@ import {
   Query,
   Redirect,
   Res,
+  UseFilters,
 } from '@nestjs/common';
 
 import { User } from '@prisma/client';
 import { Response } from 'express';
+import { ValidationFilter } from 'src/validation/validation.filter';
 import { Connection } from '../connection/connection';
 import { MailService } from '../mail/mail.service';
 import { UserRepository } from '../user-repository/user-repository';
@@ -37,16 +40,26 @@ export class UserController {
   }
 
   @Get('/hello')
+  @UseFilters(ValidationFilter)
   async sayHello(@Query('name') name: string): Promise<string> {
     return this.service.sayHello(name);
   }
 
   @Get('/create')
   async create(
-    @Query('frist_name') fristName: string,
+    @Query('first_name') firstName: string, // Perbaikan pada parameter
     @Query('last_name') lastName: string,
   ): Promise<User> {
-    return await this.userRepository.save(fristName, lastName);
+    if (!firstName) {
+      throw new HttpException(
+        {
+          code: 400,
+          error: 'first_name is required', // Konsistensi dengan parameter yang benar
+        },
+        400,
+      );
+    }
+    return await this.userRepository.save(firstName, lastName);
   }
 
   @Get('view-html')

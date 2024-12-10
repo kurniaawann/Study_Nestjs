@@ -4,6 +4,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import * as mustache from 'mustache-express';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { AppModule } from './app.module';
+import { ValidationFilter } from './validation/validation.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -17,6 +18,7 @@ async function bootstrap() {
   app.engine('html', mustache());
 
   const configService = app.get(ConfigService);
+  app.useGlobalFilters(new ValidationFilter());
 
   await app.listen(configService.get('PORT'));
 }
